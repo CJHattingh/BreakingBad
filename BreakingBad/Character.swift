@@ -13,9 +13,12 @@ class Character {
     
     var image: UIImage
     var name: String
+    var birthday : String
     
-    init(image: UIImage, name: String) {
+    init(name: String, birthday: String, image:UIImage) {
         self.image = image
         self.name = name
+        self.birthday = birthday
+        
     }
 }

@@ -8,48 +8,102 @@
 
 import UIKit
 
+struct CharacterJson: Decodable {
+    let name: String
+    let img: String
+    let birthday: String
+    
+}
+
 class CharacterListScreen: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
     
     var characters: [Character] = []
+    var loading: Bool = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        characters = createArray()
+        getCharacters()
+        
     }
+    
+    // Get all character data
+    func getCharacters(){
+        
+        var characterJson: [CharacterJson] = []
+        
+        let url = URL(string: "https://www.breakingbadapi.com/api/characters")!
+        let session = URLSession.shared
+        
+        let task = session.dataTask(with: url) { [weak self] (data, response, error) in
 
-    // create function here that requests data
-    
-    
-    // use this function to assign data to and array of objects
-    
-    func createArray() -> [Character] {
+            if let data = data {
+                characterJson = try! JSONDecoder().decode([CharacterJson].self, from: data)
+                let characterList = self?.createArray(characterList: characterJson)
+                self?.characters = characterList!
+            }
+            self?.loading = false
+            DispatchQueue.main.async {
+                self?.tableView.reloadData()
+                
+            }
+        }
+        task.resume()
         
+    }
+    
+    // function to assign data to and array of objects
+    
+    func createArray(characterList : [CharacterJson]) -> [Character] {
+
         var tempCharacters: [Character] = []
-        
-        let charecter1 = Character(image: #imageLiteral(resourceName: "Jesse_Pinkman"), name: "Jesse Pinkman")
-        
-        tempCharacters.append(charecter1)
-        
+
+        //loop here to create characters array
+        for character in characterList {
+            let imageURL = URL(string: character.img)
+
+            do {
+                let imageTry = try Data(contentsOf: imageURL!)
+                let image = UIImage(data: imageTry)
+                let newCharacter = Character(name: character.name, birthday: character.birthday, image: image!)
+                tempCharacters.append(newCharacter)
+            } catch {
+                print("Image error")
+            }
+            
+        }
         return tempCharacters
+        
     }
 }
 
 extension CharacterListScreen: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return characters.count
+        
+        if loading {
+            return 1
+            
+        } else {
+            return characters.count
+            
+        }
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let character = characters[indexPath.row]
-        
         let cell = tableView.dequeueReusableCell(withIdentifier: "CharacterCell") as!
-            CharacterCell
+        CharacterCell
         
-        cell.setCharacter(character: character)
-        
-        return cell
+        if !loading {
+            let character = characters[indexPath.row]
+            cell.setCharacter(character: character)
+            return cell
+            
+        } else {
+            cell.characterNameLabel.text = "Loading..."
+            return cell
+            
+        }
     }
 }
