@@ -16,6 +16,7 @@
 		A565766C243A202B0049EE9B /* CharacterListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A565766B243A202B0049EE9B /* CharacterListScreen.swift */; };
 		A565766E243A6A630049EE9B /* CharacterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A565766D243A6A630049EE9B /* CharacterCell.swift */; };
 		A5657670243A6D730049EE9B /* Character.swift in Sources */ = {isa = PBXBuildFile; fileRef = A565766F243A6D730049EE9B /* Character.swift */; };
+		A5657673243E451C0049EE9B /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5657671243CF6DC0049EE9B /* Utils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,7 @@
 		A565766B243A202B0049EE9B /* CharacterListScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterListScreen.swift; sourceTree = "<group>"; };
 		A565766D243A6A630049EE9B /* CharacterCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterCell.swift; sourceTree = "<group>"; };
 		A565766F243A6D730049EE9B /* Character.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Character.swift; sourceTree = "<group>"; };
+		A5657671243CF6DC0049EE9B /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +83,7 @@
 		A56576312436FFDE0049EE9B = {
 			isa = PBXGroup;
 			children = (
+				A5657671243CF6DC0049EE9B /* Utils.swift */,
 				A565763C2436FFDE0049EE9B /* BreakingBad */,
 				A56576512436FFE30049EE9B /* BreakingBadTests */,
 				A565765C2436FFE30049EE9B /* BreakingBadUITests */,
@@ -262,6 +265,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5657673243E451C0049EE9B /* Utils.swift in Sources */,
 				A565766E243A6A630049EE9B /* CharacterCell.swift in Sources */,
 				A565766C243A202B0049EE9B /* CharacterListScreen.swift in Sources */,
 				A565763E2436FFDE0049EE9B /* AppDelegate.swift in Sources */,

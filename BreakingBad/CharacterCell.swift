@@ -12,9 +12,15 @@ class CharacterCell: UITableViewCell {
 
     @IBOutlet weak var characterImageView: UIImageView!
     @IBOutlet weak var characterNameLabel: UILabel!
+    @IBOutlet weak var characterNicknameLabel: UILabel!
+    @IBOutlet weak var characterDobLabel: UILabel!
     
     func setCharacter(character: Character) {
+        
         characterImageView.image = character.image
         characterNameLabel.text = character.name
+        characterNicknameLabel.text = character.nickname
+        characterDobLabel.text = character.birthday
+        
     }
 }
