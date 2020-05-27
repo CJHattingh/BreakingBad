@@ -113,10 +113,10 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="CharacterDobLabel" destination="ERR-uq-qlJ" id="pmB-gM-JVn"/>
+                                            <outlet property="characterDobLabel" destination="ERR-uq-qlJ" id="X7w-yB-YjT"/>
                                             <outlet property="characterImageView" destination="bo7-l7-zEA" id="Ocl-pu-vPb"/>
-                                            <outlet property="characterNameLabel" destination="ab2-fF-jjo" id="tfH-cx-Q74"/>
-                                            <outlet property="characterNicknameLabel" destination="ab2-fF-jjo" id="pZz-EA-n5e"/>
+                                            <outlet property="characterNameLabel" destination="693-Cu-awB" id="VwA-Lo-lAp"/>
+                                            <outlet property="characterNicknameLabel" destination="ab2-fF-jjo" id="wQq-bd-lCF"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -138,6 +138,7 @@
                     <navigationItem key="navigationItem" id="hme-zD-o4e"/>
                     <connections>
                         <outlet property="tableView" destination="2vj-tb-za8" id="2zt-lw-2WK"/>
+                        <segue destination="OpD-lT-EgM" kind="show" identifier="showDetails" id="ieV-rG-aRj"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -161,6 +162,21 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qFt-mI-P4L" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-49.275362318840585" y="130.58035714285714"/>
+        </scene>
+        <!--Character Details Screen-->
+        <scene sceneID="On5-TW-rv6">
+            <objects>
+                <viewController id="OpD-lT-EgM" customClass="CharacterDetailsScreen" customModule="BreakingBad" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="3UI-no-Mau">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="ygl-BI-zGU"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Gwv-k1-Bb2" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1384" y="131"/>
         </scene>
     </scenes>
 </document>

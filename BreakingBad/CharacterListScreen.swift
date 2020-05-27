@@ -14,6 +14,7 @@ struct CharacterJson: Decodable {
     let img: String
     let birthday: String
     let nickname: String
+    //let id: Int
     
 }
 
@@ -28,7 +29,6 @@ class CharacterListScreen: UIViewController {
         
         super.viewDidLoad()
         getCharacters()
-        
     }
     
     // Get all character data
@@ -50,7 +50,7 @@ class CharacterListScreen: UIViewController {
             DispatchQueue.main.async {
                 self?.removeSpinner()
                 self?.tableView.reloadData()
-                
+
             }
         }
         task.resume()
@@ -113,6 +113,7 @@ extension CharacterListScreen: UITableViewDataSource, UITableViewDelegate {
             
         }
     }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "CharacterCell") as!
@@ -129,5 +130,10 @@ extension CharacterListScreen: UITableViewDataSource, UITableViewDelegate {
             return cell
             
         }
+    }
+    
+    // Show Detail screen
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: "showDetails", sender: self)
     }
 }
