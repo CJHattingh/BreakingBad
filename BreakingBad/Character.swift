@@ -15,6 +15,7 @@ class Character {
     var name: String
     var birthday : String
     var nickname : String
+    //var 
     
     init(name: String, birthday: String, image: UIImage, nickname: String) {
         
