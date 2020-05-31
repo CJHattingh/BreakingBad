@@ -10,12 +10,23 @@ import UIKit
 
 class CharacterDetailsScreen: UIViewController {
 
+    @IBOutlet weak var characterImage: UIImageView!
+    @IBOutlet weak var characterName: UILabel!
+    @IBOutlet weak var characterDob: UILabel!
+    @IBOutlet weak var characterOccupation: UILabel!
+    @IBOutlet weak var characterPortrayed: UILabel!
+    
+    var character: Character?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Character name here"
+        
+        title = character?.name
 
+        characterImage.image = character?.image
+        characterName.text = character?.nickname
+        characterDob.text = character?.birthday
+        characterOccupation.text = (character?.occupations)?.joined(separator: ", ")
+        characterPortrayed.text = character?.portrayed
     }
-    
-    
-
 }
