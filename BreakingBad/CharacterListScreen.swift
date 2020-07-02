@@ -9,13 +9,12 @@
 import UIKit
 
 struct CharacterJson: Decodable {
-    
     let name: String
     let img: String
     let birthday: String
     let nickname: String
-    //let id: Int
-    
+    let occupation: [String]
+    let portrayed: String
 }
 
 class CharacterListScreen: UIViewController {
@@ -26,7 +25,6 @@ class CharacterListScreen: UIViewController {
     var loading: Bool = true
     
     override func viewDidLoad() {
-        
         super.viewDidLoad()
         getCharacters()
     }
@@ -38,9 +36,7 @@ class CharacterListScreen: UIViewController {
         
         let url = URL(string: "https://www.breakingbadapi.com/api/characters")!
         let session = URLSession.shared
-        
         let task = session.dataTask(with: url) { [weak self] (data, response, error) in
-
             if let data = data {
                 characterJson = try! JSONDecoder().decode([CharacterJson].self, from: data)
                 let characterList = self?.createArray(characterList: characterJson)
@@ -50,12 +46,10 @@ class CharacterListScreen: UIViewController {
             DispatchQueue.main.async {
                 self?.removeSpinner()
                 self?.tableView.reloadData()
-
             }
         }
         task.resume()
         self.showSpinner()
-        
     }
     
     // function to assign data to and array of objects    
@@ -79,61 +73,50 @@ class CharacterListScreen: UIViewController {
                 let calendar = Calendar.current
                 let ageComponents = calendar.dateComponents([.year], from: birthday, to: now)
                 age = age + " (" + String(ageComponents.year!) + ")"
-                
             }
-
             do {
-                
                 let imageTry = try Data(contentsOf: imageURL!)
                 let image = UIImage(data: imageTry)
-                let newCharacter = Character(name: character.name, birthday: age, image: image!, nickname: character.nickname)
+                let newCharacter = Character(name: character.name, birthday: age, image: image!, nickname: character.nickname, occupations: character.occupation, portrayed: character.portrayed)
                 tempCharacters.append(newCharacter)
-                
             } catch {
-                
                 print("Image error")
-                
             }
-            
         }
         return tempCharacters
-        
     }
 }
 
 extension CharacterListScreen: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
         if loading {
             return 1
-            
         } else {
             return characters.count
-            
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         let cell = tableView.dequeueReusableCell(withIdentifier: "CharacterCell") as!
         CharacterCell
-        
         if !loading {
-            
             let character = characters[indexPath.row]
             cell.setCharacter(character: character)
             return cell
-            
         } else {
-            
             return cell
-            
         }
     }
     
     // Show Detail screen
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         performSegue(withIdentifier: "showDetails", sender: self)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let destination = segue.destination as? CharacterDetailsScreen {
+            destination.character = characters[(tableView.indexPathForSelectedRow?.row)!]
+        }
     }
 }

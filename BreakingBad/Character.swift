@@ -15,14 +15,15 @@ class Character {
     var name: String
     var birthday : String
     var nickname : String
-    //var 
+    var occupations: [String]
+    var portrayed: String
     
-    init(name: String, birthday: String, image: UIImage, nickname: String) {
-        
+    init(name: String, birthday: String, image: UIImage, nickname: String, occupations: [String], portrayed: String) {
         self.image = image
         self.name = name
         self.nickname = nickname
         self.birthday = birthday
-        
+        self.occupations = occupations
+        self.portrayed = portrayed
     }
 }
