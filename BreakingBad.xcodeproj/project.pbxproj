@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A519BBF72566DBAF00B685D2 /* CharacterJson.swift in Sources */ = {isa = PBXBuildFile; fileRef = A519BBF62566DBAF00B685D2 /* CharacterJson.swift */; };
 		A564CF9924605BA5007A011B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A564CF9824605BA5007A011B /* Main.storyboard */; };
 		A565763E2436FFDE0049EE9B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A565763D2436FFDE0049EE9B /* AppDelegate.swift */; };
 		A56576452436FFE30049EE9B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A56576442436FFE30049EE9B /* Assets.xcassets */; };
@@ -38,6 +39,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A519BBF62566DBAF00B685D2 /* CharacterJson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterJson.swift; sourceTree = "<group>"; };
 		A564CF9824605BA5007A011B /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		A565763A2436FFDE0049EE9B /* BreakingBad.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BreakingBad.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A565763D2436FFDE0049EE9B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -106,6 +108,7 @@
 		A565763C2436FFDE0049EE9B /* BreakingBad */ = {
 			isa = PBXGroup;
 			children = (
+				A519BBF62566DBAF00B685D2 /* CharacterJson.swift */,
 				A565763D2436FFDE0049EE9B /* AppDelegate.swift */,
 				A565766B243A202B0049EE9B /* CharacterListScreen.swift */,
 				A5657676243E5B110049EE9B /* CharacterDetailsScreen.swift */,
@@ -273,6 +276,7 @@
 				A5657677243E5B110049EE9B /* CharacterDetailsScreen.swift in Sources */,
 				A565766C243A202B0049EE9B /* CharacterListScreen.swift in Sources */,
 				A565763E2436FFDE0049EE9B /* AppDelegate.swift in Sources */,
+				A519BBF72566DBAF00B685D2 /* CharacterJson.swift in Sources */,
 				A5657670243A6D730049EE9B /* Character.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -441,6 +445,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = P3YHZKP9RY;
 				INFOPLIST_FILE = BreakingBad/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -458,6 +463,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = P3YHZKP9RY;
 				INFOPLIST_FILE = BreakingBad/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

@@ -8,29 +8,20 @@
 
 import UIKit
 
-struct CharacterJson: Decodable {
-    let name: String
-    let img: String
-    let birthday: String
-    let nickname: String
-    let occupation: [String]
-    let portrayed: String
-}
-
-class CharacterListScreen: UIViewController {
+public class CharacterListScreen: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
     
-    var characters: [Character] = []
-    var loading: Bool = true
+    private var characters: [Character] = []
+    private var loading: Bool = true
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         getCharacters()
     }
     
     // Get all character data
-    func getCharacters(){
+    private func getCharacters(){
         
         var characterJson: [CharacterJson] = []
         
@@ -53,7 +44,7 @@ class CharacterListScreen: UIViewController {
     }
     
     // function to assign data to and array of objects    
-    func createArray(characterList : [CharacterJson]) -> [Character] {
+    private func createArray(characterList : [CharacterJson]) -> [Character] {
 
         var tempCharacters: [Character] = []
 
@@ -89,7 +80,7 @@ class CharacterListScreen: UIViewController {
 
 extension CharacterListScreen: UITableViewDataSource, UITableViewDelegate {
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if loading {
             return 1
         } else {
@@ -97,7 +88,7 @@ extension CharacterListScreen: UITableViewDataSource, UITableViewDelegate {
         }
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CharacterCell") as!
         CharacterCell
         if !loading {
@@ -110,11 +101,11 @@ extension CharacterListScreen: UITableViewDataSource, UITableViewDelegate {
     }
     
     // Show Detail screen
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         performSegue(withIdentifier: "showDetails", sender: self)
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    public override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let destination = segue.destination as? CharacterDetailsScreen {
             destination.character = characters[(tableView.indexPathForSelectedRow?.row)!]
         }

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CharacterDetailsScreen: UIViewController {
+public class CharacterDetailsScreen: UIViewController {
 
     @IBOutlet weak var characterImage: UIImageView!
     @IBOutlet weak var characterName: UILabel!
@@ -18,7 +18,7 @@ class CharacterDetailsScreen: UIViewController {
     
     var character: Character?
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         
         title = character?.name

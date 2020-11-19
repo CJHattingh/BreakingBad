@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class Character {
+public class Character {
     
     var image: UIImage
     var name: String
