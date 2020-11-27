@@ -56,46 +56,56 @@ class CharacterListScreen: UIViewController {
     
      
     private func createCharacterList(from characterList : [CharacterJson]) -> [Character] {
-
         var tempCharacters: [Character] = []
-
         for character in characterList {
-            //let imageURL = URL(string: character.img)
+            let image = defaultImage!
             let birthday: String = character.birthday
             let age = addAgeToBirthday(from: birthday)
-            let image = defaultImage! //getImage(from: imageURL)
             let newCharacter = Character(name: character.name, birthday: age, image: image, nickname: character.nickname, occupations: character.occupation, portrayed: character.portrayed)
             tempCharacters.append(newCharacter)
-            
+            if let imageURL = URL(string: character.img) {
+                getImageAsync(from: newCharacter, imageUrl: imageURL)
+            }
         }
         return tempCharacters
     }
     
     private func addAgeToBirthday(from birthday: String) -> String {
-        if birthday != "Unknown" {
-            
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "MM'-'dd'-'YYY'"
-            let date = dateFormatter.date(from: birthday)
-            let now = Date()
-            guard let formattedBirthday: Date = date else {
+            if birthday != "Unknown" {
+                
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "MM'-'dd'-'YYY'"
+                let date = dateFormatter.date(from: birthday)
+                let now = Date()
+                guard let formattedBirthday: Date = date else {
+                    return birthday
+                }
+                let calendar = Calendar.current
+                let ageComponents = calendar.dateComponents([.year], from: formattedBirthday, to: now)
+                let age = birthday + " (" + String(ageComponents.year!) + ")"
+                return age
+            }
+            else {
                 return birthday
             }
-            let calendar = Calendar.current
-            let ageComponents = calendar.dateComponents([.year], from: formattedBirthday, to: now)
-            let age = birthday + " (" + String(ageComponents.year!) + ")"
-            return age
         }
-        else {
-            return birthday
+    
+    private func getImageAsync(from character: Character, imageUrl: URL) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            let characterImage = self.getImageData(imageUrl)
+            character.image = characterImage!
         }
     }
     
-    //private func getImage(from imageURL: URL) -> UIImage {
-    //    let imageTry = try Data(contentsOf: imageURL)
-    //    let image = UIImage(data: imageTry)
-    //    return image
-    //}
+    func getImageData(_ imageUrl: URL) -> UIImage? {
+        do {
+            let imageTry = try Data(contentsOf: imageUrl)
+            let image = UIImage(data: imageTry)
+            return image
+        } catch {
+            return nil
+        }
+    }
 }
 
 extension CharacterListScreen: UITableViewDataSource, UITableViewDelegate {
