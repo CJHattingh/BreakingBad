@@ -108,8 +108,8 @@
 		A565763C2436FFDE0049EE9B /* BreakingBad */ = {
 			isa = PBXGroup;
 			children = (
-				A519BBF62566DBAF00B685D2 /* CharacterJson.swift */,
 				A565763D2436FFDE0049EE9B /* AppDelegate.swift */,
+				A519BBF62566DBAF00B685D2 /* CharacterJson.swift */,
 				A565766B243A202B0049EE9B /* CharacterListScreen.swift */,
 				A5657676243E5B110049EE9B /* CharacterDetailsScreen.swift */,
 				A565766D243A6A630049EE9B /* CharacterCell.swift */,

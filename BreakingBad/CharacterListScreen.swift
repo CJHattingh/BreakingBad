@@ -8,30 +8,33 @@
 
 import UIKit
 
-public class CharacterListScreen: UIViewController {
+class CharacterListScreen: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
     
     private var characters: [Character] = []
     private var loading: Bool = true
+    private let defaultImage = UIImage(named: "defaultImage")
     
-    public override func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
-        getCharacters()
+        getAllCharacters()
     }
     
-    // Get all character data
-    private func getCharacters(){
+    private func getAllCharacters(){
         
-        var characterJson: [CharacterJson] = []
-        
-        let url = URL(string: "https://www.breakingbadapi.com/api/characters")!
+        guard let url = URL(string: "https://www.breakingbadapi.com/api/characters") else {
+            return
+        }
         let session = URLSession.shared
         let task = session.dataTask(with: url) { [weak self] (data, response, error) in
             if let data = data {
-                characterJson = try! JSONDecoder().decode([CharacterJson].self, from: data)
-                let characterList = self?.createArray(characterList: characterJson)
-                self?.characters = characterList!
+                if let characterJson = self?.decodeData(data) {
+                    guard let characterList = self?.createCharacterList(from: characterJson) else {
+                        return
+                    }
+                    self?.characters = characterList
+                }
             }
             self?.loading = false
             DispatchQueue.main.async {
@@ -43,38 +46,65 @@ public class CharacterListScreen: UIViewController {
         self.showSpinner()
     }
     
-    // function to assign data to and array of objects    
-    private func createArray(characterList : [CharacterJson]) -> [Character] {
-
+    private func decodeData(_ data: Data) -> [CharacterJson]? {
+        do {
+            return try JSONDecoder().decode([CharacterJson].self, from: data)
+        } catch {
+            return nil
+        }
+    }
+    
+     
+    private func createCharacterList(from characterList : [CharacterJson]) -> [Character] {
         var tempCharacters: [Character] = []
-
-        //loop here to create characters array
         for character in characterList {
-            let imageURL = URL(string: character.img)
-            var age: String = character.birthday
-            
-            // get age if bday not unknown
-            if age != "Unknown" {
-                
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "MM'-'dd'-'YYY'"
-                let date = dateFormatter.date(from: character.birthday)
-                let now = Date()
-                let birthday: Date = date!
-                let calendar = Calendar.current
-                let ageComponents = calendar.dateComponents([.year], from: birthday, to: now)
-                age = age + " (" + String(ageComponents.year!) + ")"
-            }
-            do {
-                let imageTry = try Data(contentsOf: imageURL!)
-                let image = UIImage(data: imageTry)
-                let newCharacter = Character(name: character.name, birthday: age, image: image!, nickname: character.nickname, occupations: character.occupation, portrayed: character.portrayed)
-                tempCharacters.append(newCharacter)
-            } catch {
-                print("Image error")
+            let image = defaultImage!
+            let birthday: String = character.birthday
+            let age = addAgeToBirthday(from: birthday)
+            let newCharacter = Character(name: character.name, birthday: age, image: image, nickname: character.nickname, occupations: character.occupation, portrayed: character.portrayed)
+            tempCharacters.append(newCharacter)
+            if let imageURL = URL(string: character.img) {
+                getImageAsync(from: newCharacter, imageUrl: imageURL)
             }
         }
         return tempCharacters
+    }
+    
+    private func addAgeToBirthday(from birthday: String) -> String {
+            if birthday != "Unknown" {
+                
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "MM'-'dd'-'YYY'"
+                let date = dateFormatter.date(from: birthday)
+                let now = Date()
+                guard let formattedBirthday: Date = date else {
+                    return birthday
+                }
+                let calendar = Calendar.current
+                let ageComponents = calendar.dateComponents([.year], from: formattedBirthday, to: now)
+                let age = birthday + " (" + String(ageComponents.year!) + ")"
+                return age
+            }
+            else {
+                return birthday
+            }
+        }
+    
+    private func getImageAsync(from character: Character, imageUrl: URL) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            let characterImage = self.getImageData(imageUrl)
+            character.image = characterImage!
+        }
+    }
+    
+    func getImageData(_ imageUrl: URL) -> UIImage? {
+        do {
+            let imageTry = try Data(contentsOf: imageUrl)
+            let image = UIImage(data: imageTry)
+            return image
+        } catch {
+            return nil
+        }
     }
 }
 
@@ -100,7 +130,6 @@ extension CharacterListScreen: UITableViewDataSource, UITableViewDelegate {
         }
     }
     
-    // Show Detail screen
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         performSegue(withIdentifier: "showDetails", sender: self)
     }
