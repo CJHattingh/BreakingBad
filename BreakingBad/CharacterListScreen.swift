@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 class CharacterListScreen: UIViewController {
 
@@ -15,9 +16,13 @@ class CharacterListScreen: UIViewController {
     private var characters: [Character] = []
     private var loading: Bool = true
     private let defaultImage = UIImage(named: "defaultImage")
+    //private var realmCharacters: Results<Character>!
+    //private let realm = RealmService.shared.realm
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        //realmCharacters = realm.objects(Character.self)
         getAllCharacters()
     }
     
@@ -59,15 +64,13 @@ class CharacterListScreen: UIViewController {
         for character in characterList {
             let newCharacter = createCharacter(from: character)
             tempCharacters.append(newCharacter)
-            if let imageURL = URL(string: character.img) {
-                getImage(from: newCharacter, imageUrl: imageURL)
-            }
+            //RealmService.shared.create(newCharacter)
         }
         return tempCharacters
     }
     
     private func createCharacter(from character: CharacterJson) -> Character {
-        return Character(name: character.name, birthday: addAge(to: character.birthday), image: defaultImage!, nickname: character.nickname, occupations: character.occupation, portrayed: character.portrayed)
+        return Character(name: character.name, birthday: addAge(to: character.birthday), image: nil, nickname: character.nickname, occupations: character.occupation, portrayed: character.portrayed, imageURL: character.img)
     }
     
     private func addAge(to birthday: String) -> String {
@@ -89,30 +92,12 @@ class CharacterListScreen: UIViewController {
         return " (" + String(ageComponents.year!) + ")"
     }
     
-    private func getImage(from character: Character, imageUrl: URL) {
-        DispatchQueue.global(qos: .userInitiated).async {
-            guard let characterImage = self.getImage(imageUrl) else {
-                character.image = self.defaultImage!
-                self.reloadTableView()
-                return
-            }
-            character.image = characterImage
-            self.reloadTableView()
-        }
-    }
-    
-    private func reloadTableView() {
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
-    }
-    
     private func getImage(_ imageUrl: URL) -> UIImage? {
         do {
             let imageData = try Data(contentsOf: imageUrl)
             return UIImage(data: imageData)
         } catch {
-            return nil
+            return defaultImage
         }
     }
 }
@@ -124,6 +109,7 @@ extension CharacterListScreen: UITableViewDataSource, UITableViewDelegate {
             return 1
         }
         return characters.count
+        //return realmCharacters.count
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -131,10 +117,27 @@ extension CharacterListScreen: UITableViewDataSource, UITableViewDelegate {
         CharacterCell
         if !loading {
             let character = characters[indexPath.row]
+            //let character = realmCharacters[indexPath.row]
+            if character.image == nil {
+                DispatchQueue.global(qos: .userInitiated).async {
+                    self.fetchImage(for: character, at: indexPath)
+                }
+            }
             cell.setCharacter(character: character)
             return cell
         }
         return cell
+    }
+
+    private func fetchImage(for character: Character , at indexPath: IndexPath) {
+        if let URL = URL(string: character.imageURL) {
+            if let image = getImage(URL) {
+                character.image = image
+                DispatchQueue.main.async {
+                    self.tableView.reloadRows(at: [indexPath], with: .none)
+                }
+            }
+        }
     }
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
