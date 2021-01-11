@@ -53,49 +53,68 @@ class CharacterListScreen: UIViewController {
             return nil
         }
     }
-    
      
-    private func createCharacterList(from characterList : [CharacterJson]) -> [Character] {
-
+    private func createCharacterList(from characterList: [CharacterJson]) -> [Character] {
         var tempCharacters: [Character] = []
-
         for character in characterList {
-            //let imageURL = URL(string: character.img)
-            let birthday: String = character.birthday
-            let age = addAgeToBirthday(from: birthday)
-            let image = defaultImage! //getImage(from: imageURL)
-            let newCharacter = Character(name: character.name, birthday: age, image: image, nickname: character.nickname, occupations: character.occupation, portrayed: character.portrayed)
+            let newCharacter = createCharacter(from: character)
             tempCharacters.append(newCharacter)
-            
+            if let imageURL = URL(string: character.img) {
+                getImage(from: newCharacter, imageUrl: imageURL)
+            }
         }
         return tempCharacters
     }
     
-    private func addAgeToBirthday(from birthday: String) -> String {
-        if birthday != "Unknown" {
-            
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "MM'-'dd'-'YYY'"
-            let date = dateFormatter.date(from: birthday)
-            let now = Date()
-            guard let formattedBirthday: Date = date else {
-                return birthday
+    private func createCharacter(from character: CharacterJson) -> Character {
+        return Character(name: character.name, birthday: addAge(to: character.birthday), image: defaultImage!, nickname: character.nickname, occupations: character.occupation, portrayed: character.portrayed)
+    }
+    
+    private func addAge(to birthday: String) -> String {
+            if birthday != "Unknown" {
+                return birthday + ageText(from: birthday)
             }
-            let calendar = Calendar.current
-            let ageComponents = calendar.dateComponents([.year], from: formattedBirthday, to: now)
-            let age = birthday + " (" + String(ageComponents.year!) + ")"
-            return age
-        }
-        else {
             return birthday
+        }
+    
+    private func ageText(from birthdate: String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MM'-'dd'-'YYY'"
+        let date = dateFormatter.date(from: birthdate)
+        let now = Date()
+        guard let formattedBirthday: Date = date else {
+            return " "
+        }
+        let ageComponents = Calendar.current.dateComponents([.year], from: formattedBirthday, to: now)
+        return " (" + String(ageComponents.year!) + ")"
+    }
+    
+    private func getImage(from character: Character, imageUrl: URL) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            guard let characterImage = self.getImage(imageUrl) else {
+                character.image = self.defaultImage!
+                self.reloadTableView()
+                return
+            }
+            character.image = characterImage
+            self.reloadTableView()
         }
     }
     
-    //private func getImage(from imageURL: URL) -> UIImage {
-    //    let imageTry = try Data(contentsOf: imageURL)
-    //    let image = UIImage(data: imageTry)
-    //    return image
-    //}
+    private func reloadTableView() {
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+    }
+    
+    private func getImage(_ imageUrl: URL) -> UIImage? {
+        do {
+            let imageData = try Data(contentsOf: imageUrl)
+            return UIImage(data: imageData)
+        } catch {
+            return nil
+        }
+    }
 }
 
 extension CharacterListScreen: UITableViewDataSource, UITableViewDelegate {
@@ -103,9 +122,8 @@ extension CharacterListScreen: UITableViewDataSource, UITableViewDelegate {
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if loading {
             return 1
-        } else {
-            return characters.count
         }
+        return characters.count
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -115,9 +133,8 @@ extension CharacterListScreen: UITableViewDataSource, UITableViewDelegate {
             let character = characters[indexPath.row]
             cell.setCharacter(character: character)
             return cell
-        } else {
-            return cell
         }
+        return cell
     }
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
