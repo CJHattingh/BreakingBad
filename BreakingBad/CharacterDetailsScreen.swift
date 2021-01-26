@@ -17,16 +17,20 @@ public class CharacterDetailsScreen: UIViewController {
     @IBOutlet weak var characterPortrayed: UILabel!
     
     var character: Character?
+     private let defaultImage = UIImage(named: "defaultImage")
     
     public override func viewDidLoad() {
         super.viewDidLoad()
         
         title = character?.name
-
-        characterImage.image = character?.image
+        if let image = character?.image {
+            characterImage.image = UIImage(data: (image))
+        } else {
+            characterImage.image = defaultImage
+        }
         characterName.text = character?.nickname
         characterDob.text = character?.birthday
-        characterOccupation.text = (character?.occupations)?.joined(separator: ", ")
+        //characterOccupation.text = (character?.occupations)?.joined(separator: ", ")
         characterPortrayed.text = character?.portrayed
     }
 }

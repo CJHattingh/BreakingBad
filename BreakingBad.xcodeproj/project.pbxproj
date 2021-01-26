@@ -146,11 +146,11 @@
 				A5657676243E5B110049EE9B /* CharacterDetailsScreen.swift */,
 				A565766D243A6A630049EE9B /* CharacterCell.swift */,
 				A565766F243A6D730049EE9B /* Character.swift */,
+				A5AA1B1B25AC783800A8B220 /* RealmService.swift */,
 				A564CF9824605BA5007A011B /* Main.storyboard */,
 				A56576442436FFE30049EE9B /* Assets.xcassets */,
 				A56576462436FFE30049EE9B /* LaunchScreen.storyboard */,
 				A56576492436FFE30049EE9B /* Info.plist */,
-				A5AA1B1B25AC783800A8B220 /* RealmService.swift */,
 			);
 			path = BreakingBad;
 			sourceTree = "<group>";
