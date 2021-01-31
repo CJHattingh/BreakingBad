@@ -7,75 +7,74 @@
 //
 
 import UIKit
+import RealmSwift
 
 class CharacterListScreen: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
     
-    private var characters: [Character] = []
-    private var loading: Bool = true
-    private let defaultImage = UIImage(named: "defaultImage")
+    private var realmCharacters: Results<Character>!
+    private let realm = RealmService.shared.realm
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        realmCharacters = realm.objects(Character.self).sorted(byKeyPath: "id", ascending: true)
         getAllCharacters()
     }
     
     private func getAllCharacters(){
-        
         guard let url = URL(string: "https://www.breakingbadapi.com/api/characters") else {
             return
         }
-        let session = URLSession.shared
-        let task = session.dataTask(with: url) { [weak self] (data, response, error) in
+        URLSession.shared.dataTask(with: url) { [weak self] (data, response, error) in
             if let data = data {
                 if let characterJson = self?.decodeData(data) {
-                    guard let characterList = self?.createCharacterList(from: characterJson) else {
-                        return
-                    }
-                    self?.characters = characterList
+                    self?.addCharactersToRealm(from: characterJson)
                 }
             }
-            self?.loading = false
             DispatchQueue.main.async {
-                self?.removeSpinner()
                 self?.tableView.reloadData()
             }
-        }
-        task.resume()
-        self.showSpinner()
+        }.resume()
     }
     
     private func decodeData(_ data: Data) -> [CharacterJson]? {
         do {
             return try JSONDecoder().decode([CharacterJson].self, from: data)
         } catch {
+            print(error)
             return nil
         }
     }
      
-    private func createCharacterList(from characterList: [CharacterJson]) -> [Character] {
-        var tempCharacters: [Character] = []
+    private func addCharactersToRealm(from characterList: [CharacterJson]) {
         for character in characterList {
             let newCharacter = createCharacter(from: character)
-            tempCharacters.append(newCharacter)
-            if let imageURL = URL(string: character.img) {
-                getImage(from: newCharacter, imageUrl: imageURL)
+            addOccupations(character: newCharacter, occupations: character.occupation)
+            DispatchQueue.main.async {
+                RealmService.shared.create(newCharacter)
             }
         }
-        return tempCharacters
     }
     
     private func createCharacter(from character: CharacterJson) -> Character {
-        return Character(name: character.name, birthday: addAge(to: character.birthday), image: defaultImage!, nickname: character.nickname, occupations: character.occupation, portrayed: character.portrayed)
+        return Character(image: nil, name: character.name, birthday: addAge(to: character.birthday), nickname: character.nickname, portrayed: character.portrayed, imageURL: character.img, id: character.char_id)
+    }
+    
+    private func addOccupations(character: Character, occupations: [String]) {
+        for occupation in occupations {
+            let occupationObj = Occupation()
+            occupationObj.occupation = occupation
+            character.occupations.append(occupationObj)
+        }
     }
     
     private func addAge(to birthday: String) -> String {
-            if birthday != "Unknown" {
-                return birthday + ageText(from: birthday)
-            }
-            return birthday
+        if birthday != "Unknown" {
+            return birthday + ageText(from: birthday)
         }
+        return birthday
+    }
     
     private func ageText(from birthdate: String) -> String {
         let dateFormatter = DateFormatter()
@@ -89,28 +88,10 @@ class CharacterListScreen: UIViewController {
         return " (" + String(ageComponents.year!) + ")"
     }
     
-    private func getImage(from character: Character, imageUrl: URL) {
-        DispatchQueue.global(qos: .userInitiated).async {
-            guard let characterImage = self.getImage(imageUrl) else {
-                character.image = self.defaultImage!
-                self.reloadTableView()
-                return
-            }
-            character.image = characterImage
-            self.reloadTableView()
-        }
-    }
-    
-    private func reloadTableView() {
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
-    }
-    
-    private func getImage(_ imageUrl: URL) -> UIImage? {
+    private func getImage(_ imageUrl: URL) -> Data? {
         do {
             let imageData = try Data(contentsOf: imageUrl)
-            return UIImage(data: imageData)
+            return imageData
         } catch {
             return nil
         }
@@ -120,30 +101,49 @@ class CharacterListScreen: UIViewController {
 extension CharacterListScreen: UITableViewDataSource, UITableViewDelegate {
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if loading {
-            return 1
-        }
-        return characters.count
+        return realmCharacters.count
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CharacterCell") as!
         CharacterCell
-        if !loading {
-            let character = characters[indexPath.row]
-            cell.setCharacter(character: character)
-            return cell
+        let character = realmCharacters[indexPath.row]
+        let id = character.id
+        let url = character.imageURL
+        if character.image == nil {
+            DispatchQueue.global(qos: .userInitiated).async {
+                self.fetchImage(for: id, url: url, at: indexPath)
+            }
         }
+        cell.setCharacter(character: character)
         return cell
+    }
+
+    private func fetchImage(for characterID: Int, url: String , at indexPath: IndexPath) {
+        if let URL = URL(string: url) {
+            if let image = getImage(URL) {
+                DispatchQueue.main.async {
+                    RealmService.shared.updateCharacter("image", id: characterID, updateValue: image)
+                    if let visibleRows = self.tableView.indexPathsForVisibleRows {
+                        if visibleRows.contains(indexPath) {
+                            self.tableView.reloadRows(at: [indexPath], with: .none)
+                        }
+                    }
+                }
+            }
+        }
     }
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         performSegue(withIdentifier: "showDetails", sender: self)
     }
-    
+
     public override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let destination = segue.destination as? CharacterDetailsScreen {
-            destination.character = characters[(tableView.indexPathForSelectedRow?.row)!]
+            guard let index = (tableView.indexPathForSelectedRow?.row) else {
+                return
+            }
+            destination.character = realmCharacters[index]
         }
     }
 }

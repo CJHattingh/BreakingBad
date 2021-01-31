@@ -15,4 +15,5 @@ public struct CharacterJson: Decodable {
     let nickname: String
     let occupation: [String]
     let portrayed: String
+    let char_id: Int
 }

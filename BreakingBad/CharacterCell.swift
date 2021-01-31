@@ -15,8 +15,14 @@ public class CharacterCell: UITableViewCell {
     @IBOutlet weak var characterNicknameLabel: UILabel!
     @IBOutlet weak var characterDobLabel: UILabel!
     
-    func setCharacter(character: Character) {        
-        characterImageView.image = character.image
+     private let defaultImage = UIImage(named: "defaultImage")
+    
+    func setCharacter(character: Character) {
+        if let image = character.image {
+            characterImageView.image = UIImage(data: (image))
+        } else {
+            characterImageView.image = defaultImage
+        }
         characterNameLabel.text = character.name
         characterNicknameLabel.text = character.nickname
         characterDobLabel.text = character.birthday
