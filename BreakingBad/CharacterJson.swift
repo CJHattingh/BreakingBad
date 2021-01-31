@@ -13,7 +13,7 @@ public struct CharacterJson: Decodable {
     let img: String
     let birthday: String
     let nickname: String
-    let occupations: [String]
+    let occupation: [String]
     let portrayed: String
-    let id: String
+    let char_id: Int
 }

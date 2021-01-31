@@ -25,23 +25,10 @@ public class RealmService {
         }
     }
     
-//    use array instead of dictionary?
-//    public func update<T: Object>(_ object: T, with dictionary: [String: Any?]) {
-//        do {
-//            try realm.write {
-//                for (key, value) in dictionary {
-//                    object.setValue(value, forKey: key)
-//                }
-//            }
-//        } catch {
-//            print(error)
-//        }
-//    }
-    
-    public func updateCharacter(_ field: String, id: String, updateValue: Any?) {
-        let chatacter = findCharacter("id", value: id)
+    public func updateCharacter(_ field: String, id: Int, updateValue: Any?) {
+        let chatacter = self.findCharacter("id", value: id)
         do {
-            try realm.write {
+            try self.realm.write {
                 chatacter.setValue(updateValue, forKey: "\(field)")
             }
         } catch {
@@ -49,18 +36,8 @@ public class RealmService {
         }
     }
     
-    public func findCharacter(_ field: String, value: String) -> Results<Character> {
-        let predicate = NSPredicate(format: "%K = %@", field, value)
-        return realm.objects(Character.self).filter(predicate)
-    }
-    
-    public func delete<T: Object>(_ object: T) {
-        do {
-            try realm.write {
-                realm.delete(object)
-            }
-        } catch {
-            print(error)
-        }
+    public func findCharacter(_ field: String, value: Int) -> Results<Character> {
+        let predicate = NSPredicate(format: "%K = %d", field, value)
+            return realm.objects(Character.self).filter(predicate)
     }
 }

@@ -30,7 +30,17 @@ public class CharacterDetailsScreen: UIViewController {
         }
         characterName.text = character?.nickname
         characterDob.text = character?.birthday
-        //characterOccupation.text = (character?.occupations)?.joined(separator: ", ")
+        var occupationLabelText = ""
+        if let occupations = character?.occupations {
+            for occupation in occupations {
+                if occupationLabelText == "" {
+                    occupationLabelText = occupation.occupation
+                } else {
+                    occupationLabelText = occupationLabelText + ", " + occupation.occupation
+                }
+            }
+        }
+        characterOccupation.text = occupationLabelText
         characterPortrayed.text = character?.portrayed
     }
 }

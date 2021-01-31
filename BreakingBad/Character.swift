@@ -23,9 +23,9 @@ public class Character: Object {
     @objc dynamic var nickname : String = ""
     @objc dynamic var portrayed: String = ""
     @objc dynamic var imageURL: String = ""
-    @objc dynamic var id: String = ""
+    @objc dynamic var id: Int = 0
     
-    convenience init(image: Data?, name: String, birthday:String, nickname: String, portrayed: String, imageURL: String, id: String) {
+    convenience init(image: Data?, name: String, birthday:String, nickname: String, portrayed: String, imageURL: String, id: Int) {
         self.init()
         self.image = image
         self.name = name
